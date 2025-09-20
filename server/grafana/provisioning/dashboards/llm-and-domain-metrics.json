@@ -1,0 +1,156 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {"type": "row", "title": "LLM", "collapsed": false, "gridPos": {"x":0, "y":0, "w":24, "h":1}},
+    {
+      "type": "timeseries",
+      "title": "LLM Calls (by model/provider/endpoint)",
+      "description": "Rate of LLM calls, broken down by model, provider, and endpoint (chat or chat_stream).",
+      "gridPos": {"x": 0, "y": 1, "w": 24, "h": 7},
+      "targets": [{"expr": "sum by (model, provider, endpoint) (rate(llm_calls_total[5m]))", "refId": "A"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "LLM p95 Latency (s)",
+      "description": "95th percentile of LLM call latency by model/provider/endpoint.",
+      "gridPos": {"x": 0, "y": 8, "w": 24, "h": 7},
+      "targets": [{"expr": "histogram_quantile(0.95, sum by (le, model, provider, endpoint) (rate(llm_latency_seconds_bucket[5m])))", "refId": "A"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "LLM Tokens (prompt vs completion)",
+      "description": "Rate of tokens used by type (prompt/completion) per model/provider.",
+      "gridPos": {"x": 0, "y": 15, "w": 24, "h": 7},
+      "targets": [{"expr": "sum by (model, provider, type) (rate(llm_tokens_total[5m]))", "refId": "A"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "LLM Errors (by reason)",
+      "description": "Error rate for LLM calls grouped by model/provider/reason.",
+      "gridPos": {"x": 0, "y": 22, "w": 24, "h": 7},
+      "targets": [{"expr": "sum by (model, provider, reason) (rate(llm_errors_total[5m]))", "refId": "A"}]
+    },
+
+    {"type": "row", "title": "LangGraph LLM", "collapsed": false, "gridPos": {"x":0, "y":29, "w":24, "h":1}},
+    {
+      "type": "timeseries",
+      "title": "LangGraph LLM Calls (by model)",
+      "description": "Rate of LLM invocations executed via LangGraph, grouped by model.",
+      "gridPos": {"x": 0, "y": 30, "w": 12, "h": 7},
+      "targets": [{"expr": "sum by (model) (rate(langgraph_llm_calls_total[5m]))", "refId": "A"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "LangGraph Tokens (prompt vs completion)",
+      "description": "Rate of tokens used by LangGraph LLM calls, split by prompt vs completion.",
+      "gridPos": {"x": 12, "y": 30, "w": 12, "h": 7},
+      "targets": [{"expr": "sum by (model, type) (rate(langgraph_tokens_total[5m]))", "refId": "A"}]
+    },
+
+    {"type": "row", "title": "Artefacts", "collapsed": false, "gridPos": {"x":0, "y":37, "w":24, "h":1}},
+    {
+      "type": "timeseries",
+      "title": "Artefacts Created (by type)",
+      "description": "Rate of artefacts created by type (document, graph, table).",
+      "gridPos": {"x": 0, "y": 38, "w": 12, "h": 7},
+      "targets": [{"expr": "sum by (type) (rate(artefacts_created_total[5m]))", "refId": "A"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "Artefact Processing p95 (s)",
+      "description": "95th percentile processing duration for artefacts by type and result.",
+      "gridPos": {"x": 12, "y": 38, "w": 12, "h": 7},
+      "targets": [{"expr": "histogram_quantile(0.95, sum by (le, type, result) (rate(artefact_processing_seconds_bucket[5m])))", "refId": "A"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "Artefact Errors (by type/reason)",
+      "description": "Errors encountered during artefact processing grouped by type and reason.",
+      "gridPos": {"x": 0, "y": 45, "w": 24, "h": 7},
+      "targets": [{"expr": "sum by (type, reason) (rate(artefact_errors_total[5m]))", "refId": "A"}]
+    },
+
+    {"type": "row", "title": "Assets (PDF & others)", "collapsed": false, "gridPos": {"x":0, "y":52, "w":24, "h":1}},
+    {
+      "type": "timeseries",
+      "title": "Asset Ingest p95 (s)",
+      "description": "95th percentile duration of asset ingestion by type and result.",
+      "gridPos": {"x": 0, "y": 53, "w": 12, "h": 7},
+      "targets": [{"expr": "histogram_quantile(0.95, sum by (le, type, result) (rate(asset_ingest_seconds_bucket[5m])))", "refId": "A"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "Asset Ingest Errors (by type/reason)",
+      "description": "Errors during asset ingestion grouped by type and reason.",
+      "gridPos": {"x": 12, "y": 53, "w": 12, "h": 7},
+      "targets": [{"expr": "sum by (type, reason) (rate(asset_ingest_errors_total[5m]))", "refId": "A"}]
+    },
+
+    {"type": "row", "title": "Web Crawl", "collapsed": false, "gridPos": {"x":0, "y":60, "w":24, "h":1}},
+    {
+      "type": "timeseries",
+      "title": "Crawl Jobs p95 (s)",
+      "description": "95th percentile duration of web crawling jobs.",
+      "gridPos": {"x": 0, "y": 61, "w": 12, "h": 7},
+      "targets": [{"expr": "histogram_quantile(0.95, sum by (le, result) (rate(crawl_jobs_seconds_bucket[5m])))", "refId": "A"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "Crawl Errors (by reason)",
+      "description": "Errors encountered during crawling grouped by reason.",
+      "gridPos": {"x": 12, "y": 61, "w": 12, "h": 7},
+      "targets": [{"expr": "sum by (reason) (rate(crawl_job_errors_total[5m]))", "refId": "A"}]
+    },
+
+    {"type": "row", "title": "Export Services", "collapsed": false, "gridPos": {"x":0, "y":68, "w":24, "h":1}},
+    {
+      "type": "timeseries",
+      "title": "Export Process p95 (s)",
+      "description": "95th percentile duration of export services grouped by export_type (markdown/table/mermaid).",
+      "gridPos": {"x": 0, "y": 69, "w": 24, "h": 7},
+      "targets": [{"expr": "histogram_quantile(0.95, sum by (le, export_type, result) (rate(export_process_seconds_bucket[5m])))", "refId": "A"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "Export Errors (by type/reason)",
+      "description": "Errors in export services grouped by export_type and reason.",
+      "gridPos": {"x": 0, "y": 76, "w": 24, "h": 7},
+      "targets": [{"expr": "sum by (export_type, reason) (rate(export_errors_total[5m]))", "refId": "A"}]
+    },
+
+    {"type": "row", "title": "LangChain Streaming", "collapsed": false, "gridPos": {"x":0, "y":83, "w":24, "h":1}},
+    {
+      "type": "timeseries",
+      "title": "LangChain Stream p95 (s)",
+      "description": "95th percentile duration of LangChain streaming sessions.",
+      "gridPos": {"x": 0, "y": 84, "w": 12, "h": 7},
+      "targets": [{"expr": "histogram_quantile(0.95, sum by (le, result) (rate(langchain_stream_seconds_bucket[5m])))", "refId": "A"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "LangChain Errors (by reason)",
+      "description": "Errors from LangChain services grouped by reason.",
+      "gridPos": {"x": 12, "y": 84, "w": 12, "h": 7},
+      "targets": [{"expr": "sum by (reason) (rate(langchain_errors_total[5m]))", "refId": "A"}]
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["fastapi", "llm", "business"],
+  "templating": {"list": []},
+  "time": {"from": "now-6h", "to": "now"},
+  "timepicker": {},
+  "timezone": "",
+  "title": "LLM & Domain Metrics",
+  "uid": "llm-and-domain-metrics",
+  "version": 1,
+  "weekStart": ""
+}
+

@@ -1,0 +1,56 @@
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 9096
+
+auth_enabled: false
+
+common:
+  replication_factor: 1
+  ring:
+    kvstore:
+      store: inmemory
+
+schema_config:
+  configs:
+    - from: 2024-01-01
+      store: boltdb-shipper
+      object_store: filesystem
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+
+storage_config:
+  boltdb_shipper:
+    active_index_directory: /loki/index
+    cache_location: /loki/cache
+  filesystem:
+    directory: /loki/chunks
+
+compactor:
+  working_directory: /loki/compactor
+  shared_store: filesystem
+
+# Enable ruler so Grafana can fetch alert rules
+ruler:
+  enable_api: true
+  rule_path: /loki/rules-temp
+  storage:
+    type: local
+    local:
+      directory: /loki/rules
+  ring:
+    kvstore:
+      store: inmemory
+
+ingester:
+  wal:
+    enabled: true
+    dir: /loki/wal
+
+limits_config:
+  ingestion_rate_mb: 8
+  ingestion_burst_size_mb: 16
+  allow_structured_metadata: true
+
+

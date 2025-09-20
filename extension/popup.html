@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 300px;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 6px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+    .button:hover {
+      background-color: #45a049;
+    }
+    .button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    .screenshot-btn {
+      background-color: #2196F3;
+    }
+    .screenshot-btn:hover {
+      background-color: #1976D2;
+    }
+    .status {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      text-align: center;
+    }
+    .status.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .status.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .status.processing {
+      background-color: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+    .platform-info {
+      background: #e8f5e8;
+      color: #2e7d32;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      text-align: center;
+      margin-bottom: 10px;
+      border: 1px solid #c8e6c9;
+    }
+    .chat-options {
+      margin-top: 10px;
+      border-top: 1px solid #e0e0e0;
+      padding-top: 10px;
+    }
+    .chat-btn {
+      background-color: #FF9800;
+    }
+    .chat-btn:hover {
+      background-color: #F57C00;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h3>Web Clipper</h3>
+  </div>
+  
+  <div id="platformInfo" class="platform-info" style="display: none;">
+    <span id="platformName"></span>
+  </div>
+  
+  <button id="clipContent" class="button">
+    📄 <span id="clipContentText">Clip Content as Text</span>
+  </button>
+  
+  <button id="takeScreenshot" class="button screenshot-btn">
+    📸 Take Screenshot
+  </button>
+  
+  <button id="clipBoth" class="button">
+    📋 <span id="clipBothText">Clip Content + Screenshot</span>
+  </button>
+  
+  <div id="chatOptions" class="chat-options" style="display: none;">
+    <button id="exportGrouped" class="button chat-btn">
+      👥 Export by User
+    </button>
+  </div>
+  
+  <div id="status" class="status" style="display: none;"></div>
+  
+  <script src="popup.js"></script>
+</body>
+</html> 

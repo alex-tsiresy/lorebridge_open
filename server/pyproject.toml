@@ -1,0 +1,236 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "lorebridge-api"
+version = "0.1.0"
+description = "LoreBridge API - FastAPI backend with intelligent agent capabilities"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "LoreBridge Team"},
+]
+keywords = ["fastapi", "ai", "agent", "api"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Framework :: FastAPI",
+]
+
+dependencies = [
+    "fastapi>=0.116.0",
+    "uvicorn==0.34.3",
+    "python-dotenv==1.1.0",
+    "pydantic>=2.0.0,<2.10.0",  # Pin below 2.10.0 for firecrawl-py compatibility
+    "pydantic-settings==2.6.1", # Updated to compatible version
+    "SQLAlchemy==2.0.30",
+    "psycopg2-binary==2.9.9",
+    "fastapi-clerk-auth==0.0.7",
+    "alembic==1.13.2",
+    "openai>=1.35.13",
+    "langchain>=0.3.0", # Updated to newer compatible version
+    "langchain-openai",
+    "langchain-community>=0.3.0", # Updated to newer compatible version
+    "langchain-google-genai",
+    "langchain-text-splitters>=0.3.0", # Advanced text chunking for RAG
+    "langgraph",
+    "python-multipart", # Required for FastAPI form data
+    "aiofiles>=24.0.0", # Async file operations for non-blocking I/O
+    "stripe>=8.0.0", # Stripe payment processing
+    "pymupdf>=1.23.0", # PDF text extraction
+    "tiktoken>=0.5.0", # Token counting for document classification
+    "chromadb>=0.4.24", # Vector database for embeddings
+    "firecrawl-py>=3.4.0", # Firecrawl web scraping - flexible version for compatibility
+    "slowapi>=0.1.9", # Rate limiting for FastAPI
+    "prometheus-fastapi-instrumentator>=7.0",
+    "prometheus-client>=0.20.0",
+    "opentelemetry-sdk>=1.27",
+    "opentelemetry-api>=1.27",
+    "opentelemetry-exporter-otlp>=1.27",
+    "opentelemetry-instrumentation-fastapi>=0.48b0",
+    "opentelemetry-instrumentation-asgi>=0.48b0",
+    "opentelemetry-instrumentation-requests>=0.48b0",
+    "structlog>=24.1",
+    "python-json-logger>=2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+]
+ai = [
+]
+production = [
+    "gunicorn>=21.0.0",
+    "uvicorn[standard]>=0.34.3",
+]
+
+# Removed invalid console script - use uv run uvicorn directly instead
+
+[project.urls]
+Homepage = "https://github.com/yourusername/lorebridge"
+Documentation = "https://github.com/yourusername/lorebridge/blob/main/README.md"
+Repository = "https://github.com/yourusername/lorebridge"
+Issues = "https://github.com/yourusername/lorebridge/issues"
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",  # Add test coverage
+    "httpx>=0.24.0",
+    "ruff>=0.1.0",
+    "mypy>=1.5.0",
+    "ngrok>=1.0.0",
+    "vulture>=2.14",
+    "radon>=6.0.1",
+    "mccabe>=0.7.0",
+    "bandit>=1.8.6",
+    "pre-commit>=3.0.0",  # Git hooks for code quality
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+exclude = [
+    ".git",
+    "__pycache__",
+    ".venv",
+    "alembic/versions",  # Exclude auto-generated migration files
+    ".ruff_cache",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+    "N",   # pep8-naming
+    "S",   # bandit security
+    "PTH", # flake8-use-pathlib
+    "SIM", # flake8-simplify
+    "RUF", # Ruff-specific rules
+]
+ignore = [
+    "E501",  # line too long, handled by ruff formatter
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex
+    "S101",  # Use of assert detected (allow in tests)
+    "S608",  # Possible SQL injection (we use SQLAlchemy ORM)
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Allow certain rules in test files
+"**/tests/**/*.py" = ["S101", "S106"]  # Allow assert and hardcoded passwords in tests
+"**/alembic/versions/*.py" = ["E501", "N999"]  # Relax rules for migration files
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = true
+
+[tool.mypy]
+python_version = "3.11"
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_untyped_defs = true
+follow_imports = "silent"
+strict_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_any_unimported = true
+no_implicit_optional = true
+warn_return_any = true
+warn_unused_configs = true
+show_error_codes = true
+exclude = [
+    "^build/",
+    "^dist/",
+    "^alembic/versions/",  # Exclude migration files
+]
+
+# Configure mypy for specific modules
+[[tool.mypy.overrides]]
+module = [
+    "firecrawl",
+    "chromadb.*",
+    "langchain.*",
+    "stripe.*",
+]
+ignore_missing_imports = true
+
+[tool.bandit]
+exclude_dirs = [
+    "tests",
+    "alembic/versions",
+    ".venv",
+    "node_modules"
+]
+# Skip certain security checks that are false positives in our context
+skips = [
+    "B608",  # SQL injection - we use SQLAlchemy ORM
+    "B101",  # assert_used - we use asserts appropriately
+]
+
+[tool.bandit.assert_used]
+skips = ["**/tests/**/*.py"]  # Allow asserts in test files
+
+[tool.vulture]
+exclude = [
+    ".venv",
+    "uploads",
+    "logs", 
+    "storage",
+    ".ruff_cache",
+    "*.pyc",
+    "__pycache__",
+    "alembic/versions",  # Exclude migrations
+]
+paths = ["app"]
+min_confidence = 80
+sort_by_size = true
+
+[tool.pytest.ini_options]
+testpaths = ["app/tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short --cov=app --cov-report=term-missing --cov-report=html"
+asyncio_mode = "auto"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+]
+
+[tool.coverage.run]
+source = ["app"]
+omit = [
+    "app/tests/*",
+    "app/alembic/*",
+    "app/main.py",  # Entry point
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
+
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"] 

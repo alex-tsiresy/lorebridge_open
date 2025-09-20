@@ -1,0 +1,335 @@
+openapi: 3.0.3
+info:
+  title: Enhanced Transcript Service API
+  description: |
+    A Flask-based service that provides transcript extraction from YouTube and Instagram videos with multiple fallback strategies.
+    
+    ## Features
+    - YouTube Transcript API with audio transcription fallback
+    - Instagram video transcription support
+    - Proxy support for reliability
+    - API key authentication
+    - Smart error handling and fallback strategies
+  version: 1.0.0
+  contact:
+    name: Enhanced Transcript Service
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:5001
+    description: Local development server
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+  /health:
+    get:
+      summary: Health Check
+      description: Check service status and configuration
+      security: []
+      responses:
+        '200':
+          description: Service health status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /proxy-status:
+    get:
+      summary: Proxy Status
+      description: Check proxy and API configuration details
+      responses:
+        '200':
+          description: Proxy configuration status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProxyStatusResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /transcript:
+    post:
+      summary: Get Transcript
+      description: |
+        Extract transcript from video URL with intelligent platform detection.
+        
+        Supports:
+        - YouTube videos (transcript API + audio fallback)
+        - Instagram videos (audio transcription)
+        - Generic video URLs (audio transcription)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TranscriptRequest'
+      responses:
+        '200':
+          description: Transcript extracted successfully
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/YouTubeTranscriptResponse'
+                  - $ref: '#/components/schemas/AudioTranscriptResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key for authentication
+
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "healthy"
+        service:
+          type: string
+          example: "enhanced-transcript-service"
+        features:
+          type: array
+          items:
+            type: string
+          example: ["youtube_transcript", "audio_download", "deepgram_transcription", "instagram_support"]
+        proxy_status:
+          type: string
+          enum: ["webshare", "none"]
+          example: "webshare"
+        deepgram_status:
+          type: string
+          enum: ["configured", "not_configured"]
+          example: "configured"
+        security:
+          type: string
+          enum: ["enabled", "disabled"]
+          example: "enabled"
+
+    ProxyStatusResponse:
+      type: object
+      properties:
+        webshare_configured:
+          type: boolean
+          example: true
+        webshare_username:
+          type: string
+          nullable: true
+          example: "your_username"
+        deepgram_configured:
+          type: boolean
+          example: true
+        recommendation:
+          type: string
+          example: "Configure Webshare residential proxies for best reliability"
+
+    TranscriptRequest:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          format: uri
+          description: Video URL (YouTube, Instagram, or generic)
+          example: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        youtubeUrl:
+          type: string
+          format: uri
+          description: Legacy field name (deprecated, use 'url')
+          deprecated: true
+
+    YouTubeTranscriptResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        transcript:
+          type: string
+          description: Full transcript text
+          example: "Full transcript text here..."
+        word_count:
+          type: integer
+          description: Number of words in transcript
+          example: 1250
+        segment_count:
+          type: integer
+          description: Number of transcript segments
+          example: 45
+        language:
+          type: string
+          description: Transcript language name
+          example: "English"
+        language_code:
+          type: string
+          description: ISO language code
+          example: "en"
+        is_generated:
+          type: boolean
+          description: Whether transcript is auto-generated
+          example: false
+        method:
+          type: string
+          enum: ["youtube_api"]
+          example: "youtube_api"
+        videoId:
+          type: string
+          description: YouTube video ID
+          example: "dQw4w9WgXcQ"
+        platform:
+          type: string
+          enum: ["youtube"]
+          example: "youtube"
+        url:
+          type: string
+          format: uri
+          description: Original video URL
+          example: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+
+    AudioTranscriptResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        transcript:
+          type: string
+          description: Full transcript text
+          example: "Full transcript text here..."
+        wordCount:
+          type: integer
+          description: Number of words in transcript
+          example: 1250
+        confidence:
+          type: number
+          format: float
+          description: Transcription confidence score (0-1)
+          example: 0.95
+        platform:
+          type: string
+          enum: ["youtube", "instagram", "generic"]
+          example: "youtube"
+        method:
+          type: string
+          enum: ["audio_transcription"]
+          example: "audio_transcription"
+        title:
+          type: string
+          description: Video title
+          example: "Video Title"
+        duration:
+          type: integer
+          description: Video duration in seconds
+          example: 300
+        url:
+          type: string
+          format: uri
+          description: Original video URL
+          example: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        videoId:
+          type: string
+          description: Video ID (YouTube only)
+          example: "dQw4w9WgXcQ"
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+        details:
+          type: string
+          description: Additional error details
+          nullable: true
+
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            missing_json:
+              summary: Missing JSON data
+              value:
+                error: "JSON data is required"
+            missing_url:
+              summary: Missing URL
+              value:
+                error: "Video URL is required (use 'url' field)"
+            invalid_url:
+              summary: Invalid YouTube URL
+              value:
+                error: "Invalid YouTube URL"
+            deepgram_required:
+              summary: Deepgram not configured
+              value:
+                error: "Deepgram API key required for Instagram video transcription"
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            missing_api_key:
+              summary: Missing API key
+              value:
+                error: "API key required. Provide X-API-Key header."
+            invalid_api_key:
+              summary: Invalid API key
+              value:
+                error: "Invalid API key"
+
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            no_transcript:
+              summary: No transcript available
+              value:
+                error: "YouTube transcript not available and Deepgram not configured"
+                details: "No transcript available"
+
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            audio_download_failed:
+              summary: Audio download failed
+              value:
+                error: "Failed to download audio"
+                details: "Instagram authentication required. Please log into Instagram in your Chrome browser first."
+            transcription_failed:
+              summary: Transcription failed
+              value:
+                error: "Failed to transcribe audio"
+                details: "Audio file too short or corrupted"
+            processing_error:
+              summary: Generic processing error
+              value:
+                error: "Failed to process YouTube video: Connection timeout" 
