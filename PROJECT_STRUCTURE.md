@@ -511,18 +511,3 @@ test: Add integration tests for agents
 4. **Check the logs** - Both frontend (browser console) and backend (terminal)
 5. **Use the documentation** - This file and the integration summary
 
-### **Common Issues:**
-- **UUID Serialization** - Always convert UUIDs to strings in API responses
-- **CORS Errors** - Check frontend URL is whitelisted in backend CORS config
-- **Database Connection** - Ensure PostgreSQL is running and credentials are correct
-- **Authentication** - Verify Clerk keys are set in both frontend and backend
-
-### **Development Workflow:**
-1. **Backend First** - Implement API endpoints with proper schemas
-2. **Frontend Integration** - Connect UI components to backend APIs  
-3. **Testing** - Use manual testing and automated tests
-4. **Documentation** - Update this file when adding major features
-
----
-
-*This documentation is living and should be updated as the project evolves. Last updated: [Current Date]* 
