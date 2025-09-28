@@ -156,12 +156,4 @@ This change **requires coordination between frontend and backend deployments**:
 
 ## Development vs Production Behavior
 
-### Development
-- **Regular requests**: `'' → /api/v1/endpoint → http://localhost:8000/api/v1/endpoint`
-- **Streaming requests**: `http://localhost:8000/api/v1/langchain-chat` (direct)
-- **CORS**: Not enforced by browsers for localhost
-
-### Production
-- **Regular requests**: `'' → /api/v1/endpoint → https://api.yourdomain.com/api/v1/endpoint` (via rewrites)
-- **Streaming requests**: `https://api.yourdomain.com/api/v1/langchain-chat` (direct)
-- **CORS**: Enforced by browsers, must be configured on backend
+Hello world
