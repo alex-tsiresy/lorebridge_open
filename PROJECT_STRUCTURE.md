@@ -524,5 +524,33 @@ test: Add integration tests for agents
 4. **Documentation** - Update this file when adding major features
 
 ---
+### **Development Workflow:**
+1. **Backend First** - Implement API endpoints with proper schemas
+2. **Frontend Integration** - Connect UI components to backend APIs  
+3. **Testing** - Use manual testing and automated tests
+4. **Documentation** - Update this file when adding major features
+
+---
+### **Development Workflow:**
+1. **Backend First** - Implement API endpoints with proper schemas
+2. **Frontend Integration** - Connect UI components to backend APIs  
+3. **Testing** - Use manual testing and automated tests
+4. **Documentation** - Update this file when adding major features
+
+---
+### **Development Workflow:**
+1. **Backend First** - Implement API endpoints with proper schemas
+2. **Frontend Integration** - Connect UI components to backend APIs  
+3. **Testing** - Use manual testing and automated tests
+4. **Documentation** - Update this file when adding major features
+
+---
+### **Development Workflow:**
+1. **Backend First** - Implement API endpoints with proper schemas
+2. **Frontend Integration** - Connect UI components to backend APIs  
+3. **Testing** - Use manual testing and automated tests
+4. **Documentation** - Update this file when adding major features
+
+---
 
 *This documentation is living and should be updated as the project evolves. Last updated: [Current Date]* 
