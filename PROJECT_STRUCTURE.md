@@ -587,14 +587,18 @@ ddddddddddddddgf
 ddddddddddddddgf
 ddddddddddddddgf
 
-ddddddddddddddgf
-ddddddddddddddgf
-ddddddddddddddgf
-ddddddddddddddgf
-ddddddddddddddgf
+  ring:
+    kvstore:
+      store: inmemory
 
-ddddddddddddddgf
-ddddddddddddddgf
-ddddddddddddddgf
-ddddddddddddddgf
-ddddddddddddddgf
+schema_config:
+  configs:
+    - from: 2024-01-01
+      store: boltdb-shipper
+      object_store: filesystem
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+
+storage_config:
