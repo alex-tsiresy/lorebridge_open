@@ -602,3 +602,18 @@ schema_config:
         period: 24h
 
 storage_config:
+
+repo = diff_data.repo or "Unknown"
+        branch = diff_data.branch or "main"
+
+        # Auto-cleanup: Mark old pending validations as rejected for the same repo/branch
+        # This ensures only one active validation per repo/branch at a time
+        logger.info(f"Checking for old pending validations for user {current_user.id}, repo={repo}, branch={branch}")
+
+        old_pending = await db.execute(
+            select(DiffValidation).where(
+                DiffValidation.user_id == str(current_user.id),
+                DiffValidation.repo == repo,
+                DiffValidation.branch == branch,
+                DiffValidation.status == DiffStatus.PENDING
+            )
